@@ -79,6 +79,21 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+
+            <plugin>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
+                <version>8.5.13</version>
+                <configuration>
+                    <url>jdbc:mysql://localhost:3306/user_management_crud</url>
+                    <user>springstudent</user>
+                    <password>springstudent</password>
+                    <schemas>
+                        <schema>user_management_crud</schema>
+                    </schemas>
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
 
