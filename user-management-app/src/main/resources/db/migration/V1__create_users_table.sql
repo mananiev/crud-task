@@ -1,3 +1,5 @@
+use user_management_crud;
+
 CREATE table if not exists users (
   id bigint primary key not null ,
   first_name varchar(30) not null ,
