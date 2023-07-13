@@ -1,4 +1,4 @@
-INSERT INTO users (id, first_name, last_name, date_of_birth, phone_number, email)
+INSERT INTO user_management_crud.users (id, first_name, last_name, date_of_birth, phone_number, email)
 VALUES
     (1, 'John', 'Doe', '1990-05-15', '555-1234', 'johndoe@example.com'),
     (2, 'Jane', 'Smith', '1985-08-21', '555-5678', 'janesmith@example.com'),

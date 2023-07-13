@@ -91,6 +91,8 @@
                 <artifactId>flyway-maven-plugin</artifactId>
                 <version>9.20.0</version>
                 <configuration>
+                    <!-- THIS IS SET TO FALSE TO ENABLE CLEAN FOR DEVELOPEMENT PURPOSES, SET TO TRUE FOR SAFETY OF DATABASE -->
+                    <cleanDisabled>false</cleanDisabled>
                     <url>jdbc:mysql://localhost:3306/user_management_crud</url>
                     <user>springstudent</user>
                     <password>springstudent</password>
