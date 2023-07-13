@@ -42,10 +42,11 @@ public class UserController {
     @PostMapping("/users")
     public User createUser(@RequestBody User user) {
 
+        User tempUser = user;
         //this is to prevent user update instead of user creation
-        user.setId(0);
+        tempUser.setId(0);
 
-        return userService.save(user);
+        return userService.save(tempUser);
     }
 
     @PutMapping("/users")
