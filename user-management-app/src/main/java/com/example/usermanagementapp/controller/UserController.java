@@ -1,7 +1,9 @@
 package com.example.usermanagementapp.controller;
 
+import com.example.usermanagementapp.dto.UserDTO;
 import com.example.usermanagementapp.entity.User;
 import com.example.usermanagementapp.service.UserService;
+import org.modelmapper.ModelMapper;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,55 +13,56 @@ public class UserController {
 
     private final UserService userService;
 
+    private ModelMapper modelMapper;
 
-    public UserController(UserService userService) {
+
+    public UserController(UserService userService, ModelMapper modelMapper) {
         this.userService = userService;
+        this.modelMapper = modelMapper;
     }
 
-    @GetMapping("/")
-    public String home() {
-        return "You are home";
-    }
 
     @GetMapping("/users")
-    public List<User> findAllUsers() {
+    public List<UserDTO> findAllUsers() {
 
         return userService.findAllUsers();
     }
 
     @GetMapping("/users/{id}")
-    public User findUserById(@PathVariable long id) {
+    public UserDTO findUserById(@PathVariable long id) {
 
-        User user = userService.findById(id);
+        UserDTO userDTO = userService.findById(id);
 
-        if (user == null) {
+        if (userDTO == null) {
             throw  new RuntimeException("User Id not found " + id);
         }
 
-        return user;
+        return userDTO;
     }
 
     @PostMapping("/users")
-    public User createUser(@RequestBody User user) {
+    public User createUser(@RequestBody UserDTO userDTO) {
 
-        User tempUser = user;
+        UserDTO tempUserDTO = userDTO;
         //this is to prevent user update instead of user creation
-        tempUser.setId(0);
+        tempUserDTO.setId(0);
 
-        return userService.save(tempUser);
+        return userService.save(tempUserDTO);
     }
 
     @PutMapping("/users")
-    public User updateUser(@RequestBody User user) {
+    public User updateUser(@RequestBody UserDTO userDTO) {
 
-        return userService.save(user);
+        return userService.save(userDTO);
+
     }
 
     @DeleteMapping("users/{id}")
     public String deleteUser(@PathVariable long id) {
-        User user = userService.findById(id);
 
-        if (user == null) {
+        UserDTO userDTO = userService.findById(id);
+
+        if (userDTO == null) {
             throw new RuntimeException("User id not found: " + id);
         }
 

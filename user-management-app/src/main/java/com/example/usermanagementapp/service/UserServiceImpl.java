@@ -1,45 +1,57 @@
 package com.example.usermanagementapp.service;
 
+import com.example.usermanagementapp.dto.UserDTO;
 import com.example.usermanagementapp.entity.User;
 import com.example.usermanagementapp.repository.UserRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private ModelMapper modelMapper;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, ModelMapper modelMapper) {
         this.userRepository = userRepository;
+        this.modelMapper = modelMapper;
     }
 
     @Override
-    public List<User> findAllUsers() {
-        return userRepository.findAll();
+    public List<UserDTO> findAllUsers() {
+        List<User> userList = userRepository.findAll();
+
+        List<UserDTO> userDTOList = userList.stream().map(user -> modelMapper.map(user, UserDTO.class)).collect(Collectors.toList());
+
+
+        return userDTOList;
     }
 
     @Override
-    public User findById(long id) {
+    public UserDTO findById(long id) {
         //Have to use Optional as we are not sure the user with the id exists
         Optional<User> optionalUser = userRepository.findById(id);
 
-        User user = null;
+        UserDTO userDTO = null;
 
         //Checking if the optional is present or not
         if (optionalUser.isPresent()) {
-            user = optionalUser.get();
+            userDTO = modelMapper.map(optionalUser.get(), UserDTO.class);
         } else {
             throw new RuntimeException("Did not find the user with id: " + id);
         }
 
-        return user;
+
+        return userDTO;
     }
 
     @Override
-    public User save(User user) {
+    public User save(UserDTO userDTO) {
+        User user = modelMapper.map(userDTO, User.class);
 
         return userRepository.save(user);
     }
