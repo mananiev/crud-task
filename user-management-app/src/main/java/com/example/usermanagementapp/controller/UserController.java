@@ -3,12 +3,16 @@ package com.example.usermanagementapp.controller;
 import com.example.usermanagementapp.dto.UserDTO;
 import com.example.usermanagementapp.entity.User;
 import com.example.usermanagementapp.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@Tag(name = "Endpoints")
 public class UserController {
 
     private final UserService userService;
@@ -21,11 +25,17 @@ public class UserController {
         this.modelMapper = modelMapper;
     }
 
-
+    @Operation(
+            description = "Returns a List with all users"
+    )
     @GetMapping("/users")
-    public List<UserDTO> findAllUsers() {
+    public List<UserDTO> findAllUsers(
+            @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
+            @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize
+    ) {
 
-        return userService.findAllUsers();
+        //to correct tmrw
+        return userService.findAllUsers(pageNo, pageSize);
     }
 
     @GetMapping("/users/{id}")
@@ -70,4 +80,6 @@ public class UserController {
 
         return "Deleted user with id: " + id;
     }
+
+
 }

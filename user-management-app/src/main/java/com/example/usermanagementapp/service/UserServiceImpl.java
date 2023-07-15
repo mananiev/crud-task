@@ -4,6 +4,10 @@ import com.example.usermanagementapp.dto.UserDTO;
 import com.example.usermanagementapp.entity.User;
 import com.example.usermanagementapp.repository.UserRepository;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,11 +26,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDTO> findAllUsers() {
-        List<User> userList = userRepository.findAll();
+    public List<UserDTO> findAllUsers(int pageNo, int pageSize) {
+
+        Pageable pageable =  PageRequest.of(pageNo,pageSize);
+        Page<User> userPage = userRepository.findAll(pageable);
+
+        List<User> userList = userPage.getContent();
 
         List<UserDTO> userDTOList = userList.stream().map(user -> modelMapper.map(user, UserDTO.class)).collect(Collectors.toList());
-
 
         return userDTOList;
     }

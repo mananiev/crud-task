@@ -18,6 +18,9 @@ public class UserDTO {
 
     private String email;
 
+    public UserDTO() {
+    }
+
     public UserDTO(long id, String firstName, String lastName, LocalDate dateOfBirth, String phoneNumber, String email) {
         this.id = id;
         this.firstName = firstName;
