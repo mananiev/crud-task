@@ -26,7 +26,8 @@ public class UserController {
     }
 
     @Operation(
-            description = "Returns a List with all users"
+            description = "Returns a json using pageable. Can also be used to sort and change sorting direction." +
+                    "Default sort is by first name and ascending. Default page number is 0 and page size is 10."
     )
     @GetMapping("/users")
     public List<UserDTO> findAllUsers(
@@ -36,10 +37,13 @@ public class UserController {
             @RequestParam(value = "sortDirection", defaultValue = "asc", required = false) String sortDirection
     ) {
 
-
         return userService.findAllUsers(pageNo, pageSize, sortBy, sortDirection);
     }
 
+    @Operation(
+            description = "Returns a single user by its id. " +
+                    "Throws UserNotFoundException if there is no user with the id."
+    )
     @GetMapping("/users/{id}")
     // @ExceptionHandler(UserNotFoundException.class)
     public UserDTO findUserById(@PathVariable long id) {
@@ -53,6 +57,9 @@ public class UserController {
         return userDTO;
     }
 
+    @Operation(
+            description = "Creates a user, accepts the user as json. All fields are required and cannot be null."
+    )
     @PostMapping("/users")
     public User createUser(@RequestBody UserDTO userDTO) {
 
@@ -63,6 +70,9 @@ public class UserController {
         return userService.save(tempUserDTO);
     }
 
+    @Operation(
+            description = "Updates a user in the database, accepts it as json"
+    )
     @PutMapping("/users")
     public User updateUser(@RequestBody UserDTO userDTO) {
 
@@ -70,13 +80,17 @@ public class UserController {
 
     }
 
+    @Operation(
+            description = "Deletes the user with the provided id, returns confirmation as text," +
+                    " throws UserNotFoundException if there is no user with the id provided"
+    )
     @DeleteMapping("users/{id}")
     public String deleteUser(@PathVariable long id) {
 
         UserDTO userDTO = userService.findById(id);
 
         if (userDTO == null) {
-            throw new RuntimeException("User id not found: " + id);
+            throw new UserNotFoundException("User id not found: " + id);
         }
 
         userService.deleteById(id);
@@ -84,6 +98,10 @@ public class UserController {
         return "Deleted user with id: " + id;
     }
 
+    @Operation(
+            description = "Searches for a user, returns all users if no parameter provided. " +
+                    "Searches in both first and last name and will return even if it is a single letter."
+    )
     @GetMapping("/users/search")
     public List<UserDTO> result(
             @RequestParam(value = "searchVariable", defaultValue = "", required = true) String searchVariable

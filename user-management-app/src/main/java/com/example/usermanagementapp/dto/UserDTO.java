@@ -2,20 +2,27 @@ package com.example.usermanagementapp.dto;
 
 
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.time.LocalDate;
 
 public class UserDTO {
 
+    @Schema(description = "Id of the User. Long.")
     private long id;
-
+    @Schema(description = "First name, cannot be null. Required.")
     private String firstName;
 
+    @Schema(description = "Last name, cannot be null. Required.")
     private String lastName;
 
+    @Schema(description = "Date of birth, cannot be null. Required.")
     private LocalDate dateOfBirth;
 
+    @Schema(description = "Phone number, cannot be null. Required.")
     private String phoneNumber;
 
+    @Schema(description = "Email, cannot be null. Required.")
     private String email;
 
     public UserDTO() {

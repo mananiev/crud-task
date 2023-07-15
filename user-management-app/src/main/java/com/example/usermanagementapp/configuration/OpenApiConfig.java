@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.info.Info;
 
 @OpenAPIDefinition(
         info = @Info(
+                title = "REST API documentation",
                 description = "OpenApi documentation for a simple REST API"
         )
 )
