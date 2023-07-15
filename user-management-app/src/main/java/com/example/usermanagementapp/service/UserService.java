@@ -2,12 +2,11 @@ package com.example.usermanagementapp.service;
 
 import com.example.usermanagementapp.dto.UserDTO;
 import com.example.usermanagementapp.entity.User;
-import org.springframework.data.domain.Page;
 
 import java.util.List;
 
 public interface UserService {
-    List<UserDTO> findAllUsers(int pageNo, int pageSize);
+    List<UserDTO> findAllUsers(int pageNo, int pageSize, String sortBy, String sortDirection);
 
     UserDTO findById(long id);
 
@@ -15,5 +14,6 @@ public interface UserService {
 
     void deleteById(long id);
 
-    //Page<UserDTO> findAllUsers();
+    List<UserDTO> findUsersBySearch(String searchVariable);
+
 }

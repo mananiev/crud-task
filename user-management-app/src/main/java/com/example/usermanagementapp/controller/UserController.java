@@ -2,11 +2,13 @@ package com.example.usermanagementapp.controller;
 
 import com.example.usermanagementapp.dto.UserDTO;
 import com.example.usermanagementapp.entity.User;
+import com.example.usermanagementapp.exceptions.UserErrorResponse;
+import com.example.usermanagementapp.exceptions.UserNotFoundException;
 import com.example.usermanagementapp.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,12 +19,10 @@ public class UserController {
 
     private final UserService userService;
 
-    private ModelMapper modelMapper;
 
-
-    public UserController(UserService userService, ModelMapper modelMapper) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.modelMapper = modelMapper;
+
     }
 
     @Operation(
@@ -31,20 +31,23 @@ public class UserController {
     @GetMapping("/users")
     public List<UserDTO> findAllUsers(
             @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
-            @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize
+            @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
+            @RequestParam(value = "sortBy", defaultValue = "firstName", required = false) String sortBy,
+            @RequestParam(value = "sortDirection", defaultValue = "asc", required = false) String sortDirection
     ) {
 
-        //to correct tmrw
-        return userService.findAllUsers(pageNo, pageSize);
+
+        return userService.findAllUsers(pageNo, pageSize, sortBy, sortDirection);
     }
 
     @GetMapping("/users/{id}")
+    // @ExceptionHandler(UserNotFoundException.class)
     public UserDTO findUserById(@PathVariable long id) {
 
         UserDTO userDTO = userService.findById(id);
 
         if (userDTO == null) {
-            throw  new RuntimeException("User Id not found " + id);
+            throw new UserNotFoundException("User Id not found " + id);
         }
 
         return userDTO;
@@ -81,5 +84,24 @@ public class UserController {
         return "Deleted user with id: " + id;
     }
 
+    @GetMapping("/users/search")
+    public List<UserDTO> result(
+            @RequestParam(value = "searchVariable", defaultValue = "", required = true) String searchVariable
+    ) {
 
+        List<UserDTO> resultList = userService.findUsersBySearch(searchVariable);
+        return resultList;
+    }
+
+
+    @ExceptionHandler
+    public ResponseEntity<UserErrorResponse> handleException(UserNotFoundException exc) {
+
+        UserErrorResponse userErrorResponse = new UserErrorResponse();
+        userErrorResponse.setStatus(HttpStatus.NOT_FOUND.value());
+        userErrorResponse.setMessage(exc.getMessage());
+        userErrorResponse.setTimestamp(System.currentTimeMillis());
+
+        return new ResponseEntity<>(userErrorResponse, HttpStatus.NOT_FOUND);
+    }
 }

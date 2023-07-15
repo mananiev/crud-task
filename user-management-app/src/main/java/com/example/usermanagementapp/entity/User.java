@@ -1,11 +1,13 @@
 package com.example.usermanagementapp.entity;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "users")
+@Hidden
 public class User {
 
     @Id

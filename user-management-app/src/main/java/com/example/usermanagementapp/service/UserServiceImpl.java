@@ -2,12 +2,14 @@ package com.example.usermanagementapp.service;
 
 import com.example.usermanagementapp.dto.UserDTO;
 import com.example.usermanagementapp.entity.User;
+import com.example.usermanagementapp.exceptions.UserNotFoundException;
 import com.example.usermanagementapp.repository.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,14 +28,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDTO> findAllUsers(int pageNo, int pageSize) {
+    public List<UserDTO> findAllUsers(int pageNo, int pageSize, String sortBy, String sortDirection) {
 
-        Pageable pageable =  PageRequest.of(pageNo,pageSize);
-        Page<User> userPage = userRepository.findAll(pageable);
+        Pageable pageableAsc = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending());
+        Pageable pageableDesc = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).descending());
+        Page<User> userPage;
+        if ("desc".equals(sortDirection)) {
+
+            userPage = userRepository.findAll(pageableDesc);
+        } else {
+            userPage = userRepository.findAll(pageableAsc);
+
+        }
 
         List<User> userList = userPage.getContent();
 
-        List<UserDTO> userDTOList = userList.stream().map(user -> modelMapper.map(user, UserDTO.class)).collect(Collectors.toList());
+        List<UserDTO> userDTOList = getUserDTOList(userList);
 
         return userDTOList;
     }
@@ -49,7 +59,7 @@ public class UserServiceImpl implements UserService {
         if (optionalUser.isPresent()) {
             userDTO = modelMapper.map(optionalUser.get(), UserDTO.class);
         } else {
-            throw new RuntimeException("Did not find the user with id: " + id);
+            throw new UserNotFoundException("Did not find the user with id: " + id);
         }
 
 
@@ -67,5 +77,17 @@ public class UserServiceImpl implements UserService {
     public void deleteById(long id) {
 
         userRepository.deleteById(id);
+    }
+
+    @Override
+    public List<UserDTO> findUsersBySearch(String searchVariable) {
+        List<User> userSearchList = userRepository.searchProducts(searchVariable);
+        List<UserDTO> userDTOSearchList = getUserDTOList(userSearchList);
+
+        return userDTOSearchList;
+    }
+
+    private List<UserDTO> getUserDTOList(List<User> userList) {
+        return userList.stream().map(user -> modelMapper.map(user, UserDTO.class)).collect(Collectors.toList());
     }
 }
