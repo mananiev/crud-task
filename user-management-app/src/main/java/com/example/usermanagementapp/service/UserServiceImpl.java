@@ -32,7 +32,9 @@ public class UserServiceImpl implements UserService {
 
         Pageable pageableAsc = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending());
         Pageable pageableDesc = PageRequest.of(pageNo, pageSize, Sort.by(sortBy).descending());
+
         Page<User> userPage;
+
         if ("desc".equals(sortDirection)) {
 
             userPage = userRepository.findAll(pageableDesc);
@@ -81,7 +83,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDTO> findUsersBySearch(String searchVariable) {
-        List<User> userSearchList = userRepository.searchProducts(searchVariable);
+        List<User> userSearchList = userRepository.searchUsers(searchVariable);
         List<UserDTO> userDTOSearchList = getUserDTOList(userSearchList);
 
         return userDTOSearchList;

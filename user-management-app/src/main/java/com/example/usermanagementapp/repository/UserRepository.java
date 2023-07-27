@@ -12,7 +12,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u FROM User u WHERE " +
             "u.firstName LIKE CONCAT('%',:searchVariable, '%')" +
             "Or u.lastName LIKE CONCAT('%', :searchVariable, '%')")
-    List<User> searchProducts(String searchVariable);
+    List<User> searchUsers(String searchVariable);
 
 
 

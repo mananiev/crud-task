@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.web.AbstractRequestMatcherRegistry;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -11,11 +12,15 @@ import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
 
 @Configuration
 public class SecurityConfig {
+
+
 
 
     // as the entity in this crud is also user I had to use a custom naming scheme
@@ -32,35 +37,43 @@ public class SecurityConfig {
 
         return jdbcUserDetailsManager;
     }
-/*
+
+    //Obviously i should have used ServerHttpSecurity to configure as im using webflux and not just web .... Now i only have to configure the access
+    @Bean
+    public SecurityWebFilterChain securityFilterChain(ServerHttpSecurity httpSecurity) {
+
+        httpSecurity.csrf().disable();
+
+        return httpSecurity.build();
+    }
+
    // For some reason this does not work here, the classic - works in another repo with the same config but not here...
    // After some more digging im not the only one having this issue, afaik the httpsecurity bean is not created bc of
    // a bug
-   @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//   @Bean
+//    public SecurityFilterChain securityFilterChain(ServerHttpSecurity http) throws Exception {
+//
+//        http.csrf(AbstractHttpConfigurer::disable);
+////                        .requestMatchers(HttpMethod.GET, "/users").hasRole("EMPLOYEE")
+////                        .requestMatchers(HttpMethod.GET, "/users/**").hasRole("EMPLOYEE")
+////                        .requestMatchers(HttpMethod.POST, "/users").hasRole("MANAGER")
+////                        .requestMatchers(HttpMethod.PUT, "/users").hasRole("MANAGER")
+////                        .requestMatchers(HttpMethod.DELETE, "/users").hasRole("ADMIN")
+////                        .requestMatchers(HttpMethod.DELETE, "/users/**").hasRole("ADMIN")
+//
+//
+//
+//
+////        http.httpBasic(Customizer.withDefaults());
+////
+////            //Couldn't get Postman to receive a Cookie with csrf or any csrf at all,
+////             // Tried all suggestions in stackoverflow for taking the csrf from a browser session and so on but nothing worked...,
+////             // so I disabled it, per spring documentation it is not required for stateless rest api and non browser clients of rest-api
+////        http.csrf(AbstractHttpConfigurer::disable);
+//
+//        return http.build();
+//    }
 
-        http.authorizeHttpRequests(configurer ->
-                configurer
-                        .requestMatchers(HttpMethod.GET, "/users").hasRole("EMPLOYEE")
-                        .requestMatchers(HttpMethod.GET, "/users/**").hasRole("EMPLOYEE")
-                        .requestMatchers(HttpMethod.POST, "/users").hasRole("MANAGER")
-                        .requestMatchers(HttpMethod.PUT, "/users").hasRole("MANAGER")
-                        .requestMatchers(HttpMethod.DELETE, "/users").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/users/**").hasRole("ADMIN")
-
-
-        );
-
-        http.httpBasic(Customizer.withDefaults());
-
-            //Couldn't get Postman to receive a Cookie with csrf or any csrf at all,
-             // Tried all suggestions in stackoverflow for taking the csrf from a browser session and so on but nothing worked...,
-             // so I disabled it, per spring documentation it is not required for stateless rest api and non browser clients of rest-api
-        http.csrf(AbstractHttpConfigurer::disable);
-
-        return http.build();
-    }
-*/
 
 
 
